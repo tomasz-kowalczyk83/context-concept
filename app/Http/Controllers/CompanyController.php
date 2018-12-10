@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Less_Parser;
 use App\Company\Enterprise;
 use Illuminate\Http\Request;
 use App\Company\Platforms\Video;
@@ -11,12 +12,41 @@ use Illuminate\Contracts\Queue\EntityResolver;
 
 class CompanyController extends Controller
 {
+	protected $colors = [
+	   'primary' => '336699',
+	   'success' => '339966',
+	   'info' => '663399',
+	   'warning' => '669933',
+	   'danger' => '996633'
+	];
 
     public function __construct()
     {
-        echo "I'm called";
-        dump($this);
+
+		//parent::__construct();
+
+		$less_file = 'custom';
+
+	    $file_path = base_path().'/resources/assets/less/skins';
+	    $file_name = $file_path.'/'.$less_file.'.blade.php';
+	    //$less_contents = view()->file($file_name)->render();
+		$less_contents = view()->file($file_name, $this->colors)->render();
+
+	    $parser = new Less_Parser();
+	    $parser->SetImportDirs([
+	        base_path() => base_path(),
+	        $file_path => $file_path
+	    ]);
+	    $parser->parse($less_contents);
+	    $compiled_css = $parser->getCss();
+
+	    return response($compiled_css)->header('Content-Type', 'text/css');
     }
+
+	public static function boot()
+	{
+		echo "boot";
+	}
 
     public function theme($type, $id)
     {
@@ -83,8 +113,6 @@ class CompanyController extends Controller
     {
         //
         $enterprise = Enterprise::find($id);
-
-        dump($this, $enterprise );
 
         return view('enterprise', compact('enterprise'));
 

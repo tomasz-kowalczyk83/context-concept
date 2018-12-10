@@ -23,8 +23,6 @@ class Enterprise extends Company
     {
         parent::__construct();
         $this->platformProvider = \App::make('App\Company\Platforms\Video');
-        echo "enterprise construct";
-
     }
 
 

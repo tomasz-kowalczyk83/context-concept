@@ -51,7 +51,6 @@ class AnalyticsController extends Controller
         $apptypename = 'App\\' . $type;
          //dump($apptypename::find($id));
          $apptype = $apptypename::find($id);
-         dump($apptype);
 
         return view('analytics',compact('apptype'));
     }
